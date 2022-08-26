@@ -6,8 +6,15 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.createUser = (req, res, next) => {
-  console.log(req.body);
+module.exports.getUser = (req, res, next) => {
+  user.findById(req.params.userId)
+    .then((founduser) => {
+      res.send(founduser);
+    })
+    .catch(next);
+};
+
+module.exports.createUser = (req, res) => {
   const {
     name, about, avatar,
   } = req.body;
@@ -16,6 +23,24 @@ module.exports.createUser = (req, res, next) => {
     about,
     avatar,
   })
-  .catch((e) => console.log(e));
+    .catch((e) => console.log(e));
   res.send(req.body);
+};
+
+module.exports.updateProfile = (req, res) => {
+  const {
+    name, about,
+  } = req.body;
+  user.findByIdAndUpdate(req.user._id, { name, about })
+    .then((usr) => res.send({ data: usr }))
+    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
+};
+
+module.exports.updateAvatar = (req, res) => {
+  const {
+    avatar,
+  } = req.body;
+  user.findByIdAndUpdate(req.user._id, { avatar })
+    .then((usr) => res.send({ data: usr }))
+    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
 };

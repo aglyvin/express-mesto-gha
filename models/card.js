@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
 
-const cardShema = new Schema({
+const cardShema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -12,21 +12,21 @@ const cardShema = new Schema({
     required: true,
   },
   owner: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
   },
   likes: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
       default: [],
     },
   ],
   createdAt: {
-    type: Schema.Types.Date,
+    type: mongoose.Schema.Types.Date,
     default: Date.now,
   },
 });
 
-export default model('card', cardShema);
+module.exports = mongoose.model('card', cardShema);
