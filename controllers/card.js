@@ -18,13 +18,13 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.getCards = (req, res, next) => {
+module.exports.getCards = (req, res) => {
   card.find({})
     .then((cards) => res.send(cards))
-    .catch(next);
+    .catch((e) => res.status(500).send({ message: `Произошла ошибка: ${e.message}` }));
 };
 
-module.exports.getCard = (req, res, next) => {
+module.exports.getCard = (req, res) => {
   card.findById(req.params.cardId)
     .then((foundCard) => {
       if (!foundCard) {
@@ -33,7 +33,25 @@ module.exports.getCard = (req, res, next) => {
       }
       res.send(foundCard);
     })
-    .catch(next);
+    .catch((e) => res.status(500).send({ message: `Произошла ошибка: ${e.message}` }));
+};
+
+module.exports.deleteCard = (req, res) => {
+  card.findOneAndDelete(req.params.cardId)
+    .then((foundCard) => {
+      if (!foundCard) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send(foundCard);
+    })
+    .catch((e) => {
+      if (e.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+    });
 };
 
 module.exports.like = (req, res) => {
