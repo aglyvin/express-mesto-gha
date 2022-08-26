@@ -42,7 +42,20 @@ module.exports.like = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((crd) => res.send(crd));
+    .then((crd) => {
+      if (!crd) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send(crd);
+    })
+    .catch((e) => {
+      if (e.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные.' });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+    });
 };
 
 module.exports.dislike = (req, res) => {
@@ -51,5 +64,18 @@ module.exports.dislike = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((crd) => res.send(crd));
+    .then((crd) => {
+      if (!crd) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send(crd);
+    })
+    .catch((e) => {
+      if (e.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные.' });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+    });
 };
