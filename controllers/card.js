@@ -8,7 +8,14 @@ module.exports.createCard = (req, res) => {
     link,
     owner,
   })
-    .then((data) => res.send(data));
+    .then((data) => res.send(data))
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+    });
 };
 
 module.exports.getCards = (req, res, next) => {
@@ -20,6 +27,10 @@ module.exports.getCards = (req, res, next) => {
 module.exports.getCard = (req, res, next) => {
   card.findById(req.params.cardId)
     .then((foundCard) => {
+      if (!foundCard) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
       res.send(foundCard);
     })
     .catch(next);
