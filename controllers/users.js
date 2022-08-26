@@ -24,7 +24,13 @@ module.exports.createUser = (req, res) => {
     avatar,
   })
     .then((usr) => res.send({ ...req.body, id: usr.id }))
-    .catch((e) => console.log(e));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return;
+      }
+      res.status(500).send('Произошла ошибка');
+    });
 };
 
 module.exports.updateProfile = (req, res) => {
