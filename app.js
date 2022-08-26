@@ -12,7 +12,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
 });
 app.use(bodyParser.json());
+app.use((req, res, next) => {
+  req.user = {
+    _id: '630855419f7e2653469273d6',
+  };
+  next();
+});
 app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
