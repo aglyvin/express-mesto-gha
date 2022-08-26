@@ -16,11 +16,11 @@ module.exports.getUser = (req, res) => {
       res.send(founduser);
     })
     .catch((e) => {
-      if (e.name === 'ValidationError') {
+      if (e.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+      res.status(500).send({ message: `Произошла ошибка: ${e.name}` });
     });
 };
 
@@ -47,7 +47,7 @@ module.exports.updateProfile = (req, res) => {
   const {
     name, about,
   } = req.body;
-  user.findByIdAndUpdate(req.user._id, { name, about })
+  user.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .then((usr) => {
       if (!usr) {
         res.status(404).send({ message: 'Пользователь не найден' });
@@ -68,7 +68,7 @@ module.exports.updateAvatar = (req, res) => {
   const {
     avatar,
   } = req.body;
-  user.findByIdAndUpdate(req.user._id, { avatar })
+  user.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .then((usr) => {
       if (!usr) {
         res.status(404).send({ message: 'Пользователь не найден' });
