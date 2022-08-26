@@ -44,3 +44,21 @@ module.exports.updateAvatar = (req, res) => {
     .then((usr) => res.send({ data: usr }))
     .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
 };
+
+module.exports.updateProfile = (req, res) => {
+  const {
+    name, about,
+  } = req.body;
+  user.findByIdAndUpdate(req.user._id, { name, about })
+    .then((usr) => res.send({ data: usr }))
+    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
+};
+
+module.exports.updateAvatar = (req, res) => {
+  const {
+    avatar,
+  } = req.body;
+  user.findByIdAndUpdate(req.user._id, { avatar })
+    .then((usr) => res.send({ data: usr }))
+    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
+};
