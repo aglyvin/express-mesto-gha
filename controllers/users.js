@@ -10,12 +10,16 @@ module.exports.getUser = (req, res) => {
   user.findById(req.params.userId)
     .then((founduser) => {
       if (!founduser) {
-        res.status(400).send({ message: 'Пользователь не найден' });
+        res.status(404).send({ message: 'Пользователь не найден' });
         return;
       }
       res.send(founduser);
     })
     .catch((e) => {
+      if (e.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return;
+      }
       res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
     });
 };
@@ -35,7 +39,7 @@ module.exports.createUser = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
     });
 };
 
@@ -56,7 +60,7 @@ module.exports.updateProfile = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
     });
 };
 
@@ -65,24 +69,18 @@ module.exports.updateAvatar = (req, res) => {
     avatar,
   } = req.body;
   user.findByIdAndUpdate(req.user._id, { avatar })
-    .then((usr) => res.send({ data: usr }))
-    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
-};
-
-module.exports.updateProfile = (req, res) => {
-  const {
-    name, about,
-  } = req.body;
-  user.findByIdAndUpdate(req.user._id, { name, about })
-    .then((usr) => res.send({ data: usr }))
-    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
-};
-
-module.exports.updateAvatar = (req, res) => {
-  const {
-    avatar,
-  } = req.body;
-  user.findByIdAndUpdate(req.user._id, { avatar })
-    .then((usr) => res.send({ data: usr }))
-    .catch((err) => res.status(500).send({ message: `Error: ${err.message}` }));
+    .then((usr) => {
+      if (!usr) {
+        res.status(404).send({ message: 'Пользователь не найден' });
+        return;
+      }
+      res.send(usr);
+    })
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+    });
 };
