@@ -1,26 +1,29 @@
 const user = require('../models/user');
+const errors = require('../errors/codes');
 
-module.exports.getUsers = (req, res, next) => {
+module.exports.getUsers = (req, res) => {
   user.find({})
     .then((users) => res.send(users))
-    .catch(next);
+    .catch((e) => {
+      res.status(errors.ERROR).send({ message: `Произошла ошибка: ${e.name}` });
+    });
 };
 
 module.exports.getUser = (req, res) => {
   user.findById(req.params.userId)
     .then((founduser) => {
       if (!founduser) {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(errors.NOT_FOUND).send({ message: 'Пользователь не найден' });
         return;
       }
       res.send(founduser);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        res.status(errors.DATA_ERROR).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${e.name}` });
+      res.status(errors.ERROR).send({ message: `Произошла ошибка: ${e.name}` });
     });
 };
 
@@ -36,10 +39,10 @@ module.exports.createUser = (req, res) => {
     .then((usr) => res.send({ ...req.body, _id: usr.id }))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        res.status(errors.DATA_ERROR).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+      res.status(errors.ERROR).send({ message: `Произошла ошибка: ${e.message}` });
     });
 };
 
@@ -50,17 +53,17 @@ module.exports.updateProfile = (req, res) => {
   user.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .then((usr) => {
       if (!usr) {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(errors.NOT_FOUND).send({ message: 'Пользователь не найден' });
         return;
       }
       res.send(usr);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        res.status(errors.DATA_ERROR).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+      res.status(errors.ERROR).send({ message: `Произошла ошибка: ${e.message}` });
     });
 };
 
@@ -71,16 +74,16 @@ module.exports.updateAvatar = (req, res) => {
   user.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .then((usr) => {
       if (!usr) {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(errors.NOT_FOUND).send({ message: 'Пользователь не найден' });
         return;
       }
       res.send(usr);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        res.status(errors.DATA_ERROR).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${e.message}` });
+      res.status(errors.ERROR).send({ message: `Произошла ошибка: ${e.message}` });
     });
 };
