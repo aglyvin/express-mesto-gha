@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const errors = require('./errors/codes');
 
 const { PORT = 3000 } = process.env;
 
