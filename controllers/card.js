@@ -12,7 +12,6 @@ module.exports.createCard = (req, res) => {
     .then((data) => res.send(data))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        console.log(errors.DATA_ERROR);
         res.status(errors.DATA_ERROR).send({ message: 'Переданы некорректные данные при создании карточки.' });
         return;
       }
