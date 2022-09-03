@@ -14,7 +14,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
 });
 app.use(bodyParser.json());
-app.use('/auth', require('./routes/auth'));
+app.use(require('./routes/auth'));
 
 app.use(auth);
 app.use('/users', require('./routes/users'));
