@@ -14,7 +14,7 @@ module.exports.createCard = (req, res, next) => {
     .then((data) => res.send(data))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       }
       next(e);
     });
@@ -30,10 +30,10 @@ module.exports.deleteCard = (req, res, next) => {
   card.findById(req.params.cardId)
     .then((foundCard) => {
       if (!foundCard) {
-        throw new NotFoundError('Карточка не найдена');
+        next(new NotFoundError('Карточка не найдена'));
       }
       if (!foundCard.owner.equals(req.user._id)) {
-        throw new ForbiddenError('Нельзя удалить карточку, созданную другим пользователем');
+        next(new ForbiddenError('Нельзя удалить карточку, созданную другим пользователем'));
       }
       return foundCard.remove()
         .then(() => {
@@ -42,7 +42,7 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       }
       next(e);
     });
@@ -56,13 +56,13 @@ module.exports.like = (req, res, next) => {
   )
     .then((crd) => {
       if (!crd) {
-        throw new NotFoundError('Карточка не найдена');
+        next(new NotFoundError('Карточка не найдена'));
       }
       res.send(crd);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные.');
+        next(new BadRequestError('Переданы некорректные данные.'));
       }
       next(e);
     });
@@ -76,13 +76,13 @@ module.exports.dislike = (req, res, next) => {
   )
     .then((crd) => {
       if (!crd) {
-        throw new NotFoundError('Карточка не найдена');
+        next(new NotFoundError('Карточка не найдена'));
       }
       res.send(crd);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные.');
+        next(new BadRequestError('Переданы некорректные данные.'));
       }
       next(e);
     });

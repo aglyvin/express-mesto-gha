@@ -18,13 +18,13 @@ module.exports.getUser = (req, res, next) => {
   user.findById(req.params.userId)
     .then((founduser) => {
       if (!founduser) {
-        throw new NotFoundError('Пользователь не найден');
+        next(new NotFoundError('Пользователь не найден'));
       }
       res.send(founduser);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       next(e);
     });
@@ -34,13 +34,13 @@ module.exports.getLoggedUser = (req, res, next) => {
   user.findById(req.user._id)
     .then((founduser) => {
       if (!founduser) {
-        throw new NotFoundError('Пользователь не найден');
+        next(new NotFoundError('Пользователь не найден'));
       }
       res.send(founduser);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       next(e);
     });
@@ -62,10 +62,10 @@ module.exports.createUser = (req, res, next) => {
         .then((usr) => res.send({ ...req.body, _id: usr.id }))
         .catch((e) => {
           if (e.name === 'ValidationError') {
-            throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+            next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
           }
           if (e.code === 11000) {
-            throw new ConflictError('Пользователь существует');
+            next(new ConflictError('Пользователь существует'));
           }
           next(e);
         });
@@ -79,13 +79,13 @@ module.exports.updateProfile = (req, res, next) => {
   user.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true, new: true })
     .then((usr) => {
       if (!usr) {
-        throw new NotFoundError('Пользователь не найден');
+        next(new NotFoundError('Пользователь не найден'));
       }
       res.send(usr);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       next(e);
     });
@@ -98,19 +98,19 @@ module.exports.updateAvatar = (req, res, next) => {
   user.findByIdAndUpdate(req.user._id, { avatar }, { runValidators: true, new: true })
     .then((usr) => {
       if (!usr) {
-        throw new NotFoundError('Пользователь не найден');
+        next(new NotFoundError('Пользователь не найден'));
       }
       res.send(usr);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при обновлении аватара.');
+        next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
       }
       next(e);
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const {
     email, password,
   } = req.body;
@@ -124,6 +124,6 @@ module.exports.login = (req, res) => {
       res.send({ token });
     })
     .catch(() => {
-      throw new ForbiddenError('Некорректный токен');
+      next(new ForbiddenError('Некорректный токен'));
     });
 };
