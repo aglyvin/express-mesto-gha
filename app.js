@@ -20,12 +20,8 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use(() => {
-  throw new NotFoundError('Адрес не существует');
-});
-
-app.use((err, req, res, next) => {
-  res.status(err.status).send({ message: err.message });
+app.use((req, res) => {
+  res.status(errors.NOT_FOUND).send({ message: 'Адрес не существует' });
 });
 
 app.listen(PORT, () => {
