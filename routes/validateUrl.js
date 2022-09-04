@@ -3,6 +3,6 @@ function validateUrl(url) {
   if (regex.test(url)) {
     return url;
   }
-  throw new Error('Ошибка валидации аватара');
+  throw new Error('Ошибка валидации адреса');
 }
 module.exports = { validateUrl };
