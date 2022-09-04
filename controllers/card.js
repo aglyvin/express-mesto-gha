@@ -37,7 +37,7 @@ module.exports.deleteCard = (req, res, next) => {
       }
       return foundCard.remove()
         .then(() => {
-          res.send('The card was deleted');
+          res.send({ message: 'The card was deleted' });
         });
     })
     .catch((e) => {
