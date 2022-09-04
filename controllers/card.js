@@ -78,7 +78,8 @@ module.exports.dislike = (req, res, next) => {
       if (!crd) {
         next(new NotFoundError('Карточка не найдена'));
       }
-      res.send(crd);
+      res.send({ message: 'dislike' });
+      // res.send(crd);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
