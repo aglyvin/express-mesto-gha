@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { NotFoundError } = require('./errors/NotFoundError');
 
@@ -23,6 +24,8 @@ app.use('/cards', require('./routes/cards'));
 app.use(() => {
   throw new NotFoundError('Адрес не существует');
 });
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   res.status(err.statusCode).send({ message: err.message });
