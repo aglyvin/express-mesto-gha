@@ -58,7 +58,7 @@ module.exports.like = (req, res, next) => {
       if (!crd) {
         next(new NotFoundError('Карточка не найдена'));
       }
-      res.send(crd);
+      res.send({ data: 'like' });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
@@ -76,10 +76,9 @@ module.exports.dislike = (req, res, next) => {
   )
     .then((crd) => {
       if (!crd) {
-        next(new NotFoundError('Карточка не найдена'));
+        throw new NotFoundError('Карточка не найдена');
       }
-      res.send({ message: 'dislike' });
-      // res.send(crd);
+      res.send({ data: 'dislike' });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
