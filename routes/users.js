@@ -8,7 +8,7 @@ const {
   updateProfile,
   updateAvatar,
 } = require('../controllers/users');
-const { validateAvatar } = require('./validateAvatar');
+const { validateUrl } = require('./validateUrl');
 
 router.get('/', getUsers);
 router.get('/me', getLoggedUser);
@@ -19,7 +19,7 @@ router.get('/:userId', celebrate({
 }), getUser);
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().custom(validateAvatar),
+    avatar: Joi.string().custom(validateUrl),
   }),
 }), updateAvatar);
 router.patch('/me', celebrate({

@@ -4,13 +4,13 @@ const {
   createUser,
   login,
 } = require('../controllers/users');
-const { validateAvatar } = require('./validateAvatar');
+const { validateUrl } = require('./validateUrl');
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().custom(validateAvatar),
+    avatar: Joi.string().custom(validateUrl),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
