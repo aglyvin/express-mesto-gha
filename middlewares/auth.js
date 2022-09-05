@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { ForbiddenError } = require('../errors/ForbiddenError');
 const { UnauthorizeError } = require('../errors/UnauthorizeError');
 
 module.exports = (req, res, next) => {
@@ -12,7 +11,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
-    next(new ForbiddenError('Неправильные имя пользователя или пароль'));
+    next(new UnauthorizeError('Неправильные имя пользователя или пароль'));
   }
   req.user = payload;
   next();

@@ -2,8 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const auth = require('./middlewares/auth');
-const { NotFoundError } = require('./errors/NotFoundError');
+const routes = require('./routes');
 
 const { PORT = 3000 } = process.env;
 
@@ -15,15 +14,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
 });
 app.use(bodyParser.json());
-app.use(require('./routes/auth'));
 
-app.use(auth);
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
-
-app.use(() => {
-  throw new NotFoundError('Адрес не существует');
-});
+app.use(routes);
 
 app.use(errors());
 
