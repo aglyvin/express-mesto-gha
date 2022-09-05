@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const routes = require('./routes');
+const errorHandler = require('./errors/errorHandler');
 
 const { PORT = 3000 } = process.env;
 
@@ -19,10 +20,7 @@ app.use(routes);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-  next();
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
