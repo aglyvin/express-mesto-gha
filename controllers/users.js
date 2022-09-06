@@ -19,14 +19,16 @@ module.exports.getUser = (req, res, next) => {
     .then((founduser) => {
       if (!founduser) {
         next(new NotFoundError('Пользователь не найден'));
+      } else {
+        res.send(founduser);
       }
-      res.send(founduser);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
 
@@ -35,14 +37,16 @@ module.exports.getLoggedUser = (req, res, next) => {
     .then((founduser) => {
       if (!founduser) {
         next(new NotFoundError('Пользователь не найден'));
+      } else {
+        res.send(founduser);
       }
-      res.send(founduser);
     })
     .catch((e) => {
       if (e.name === 'CastError') {
         next(BadRequestError('Переданы некорректные данные при создании пользователя.'));
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
 
@@ -65,11 +69,11 @@ module.exports.createUser = (req, res, next) => {
         .catch((e) => {
           if (e.name === 'ValidationError') {
             next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
-          }
-          if (e.code === 11000) {
+          } else if (e.code === 11000) {
             next(new ConflictError('Пользователь существует'));
+          } else {
+            next(e);
           }
-          next(e);
         });
     });
 };
@@ -82,14 +86,16 @@ module.exports.updateProfile = (req, res, next) => {
     .then((usr) => {
       if (!usr) {
         next(new NotFoundError('Пользователь не найден'));
+      } else {
+        res.send(usr);
       }
-      res.send(usr);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
 
@@ -101,14 +107,16 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((usr) => {
       if (!usr) {
         next(new NotFoundError('Пользователь не найден'));
+      } else {
+        res.send(usr);
       }
-      res.send(usr);
     })
     .catch((e) => {
       if (e.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
 

@@ -32,24 +32,23 @@ module.exports.deleteCard = (req, res, next) => {
     .then((foundCard) => {
       if (!foundCard) {
         next(new NotFoundError('Карточка не найдена'));
-        return;
-      }
-      if (!foundCard.owner.equals(req.user._id)) {
+      } else if (!foundCard.owner.equals(req.user._id)) {
         next(new ForbiddenError('Нельзя удалить карточку, созданную другим пользователем'));
-        return;
+      } else {
+        return foundCard.remove()
+          .then(() => {
+            res.send({ message: 'The card was deleted' });
+          });
       }
-      return foundCard.remove()
-        .then(() => {
-          res.send({ message: 'The card was deleted' });
-          return;
-        });
+      // eslint ругается, что нет возврата
+      return null;
     })
     .catch((e) => {
       if (e.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
-        return;
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
 
@@ -62,14 +61,16 @@ module.exports.like = (req, res, next) => {
     .then((crd) => {
       if (!crd) {
         next(new NotFoundError('Карточка не найдена'));
+      } else {
+        res.send({ data: 'like' });
       }
-      res.send({ data: 'like' });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные.'));
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
 
@@ -81,14 +82,16 @@ module.exports.dislike = (req, res, next) => {
   )
     .then((crd) => {
       if (!crd) {
-        throw new NotFoundError('Карточка не найдена');
+        next(new NotFoundError('Карточка не найдена'));
+      } else {
+        res.send({ data: 'dislike' });
       }
-      res.send({ data: 'dislike' });
     })
     .catch((e) => {
       if (e.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные.'));
+      } else {
+        next(e);
       }
-      next(e);
     });
 };
